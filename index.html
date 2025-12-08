@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AR Tata Surya</title>
+
+  <!-- A-FRAME -->
+  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+
+  <!-- AR.js -->
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+  <style>
+    body { margin: 0; overflow: hidden; background: black; font-family: Arial, sans-serif; }
+
+    #titleBox {
+      position: fixed; top: 15px; left: 50%; transform: translateX(-50%);
+      padding: 10px 22px; border-radius: 14px;
+      background: linear-gradient(135deg,#1f2937,#111);
+      color: white; font-size: 20px; font-weight: bold; z-index: 9999;
+    }
+
+    .panel {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-wrap: wrap; width: 95%; max-width: 450px;
+      gap: 12px; z-index: 9999;
+    }
+
+    .btn {
+      flex: 1 1 calc(50% - 10px);
+      padding: 14px 16px; border: none; border-radius: 12px;
+      background: linear-gradient(135deg,#2962ff,#0d47a1);
+      color: white; font-weight: bold; cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="titleBox">AR Tata Surya</div>
+
+  <!-- PANEL BUTTONS -->
+  <div class="panel">
+    <button class="btn" onclick="startOrbit()">▶ Mulai Orbit</button>
+    <button class="btn" onclick="stopOrbit()">⏸ Hentikan Orbit</button>
+    <button class="btn" onclick="speedUp()">⚡ Percepat Orbit</button>
+    <button class="btn" onclick="slowDown()">🐢 Perlambat Orbit</button>
+    <button class="btn" onclick="resetView()">🔄 Reset Tata Surya</button>
+    <button class="btn" onclick="zoomIn()">➕ Perbesar Tata Surya</button>
+    <button class="btn" onclick="zoomOut()">➖ Perkecil Tata Surya</button>
+  </div>
+
+  <!-- AR SCENE -->
+  <a-scene embedded arjs="sourceType: webcam; facingMode: environment;">
+    <a-marker preset="hiro" id="marker">
+
+      <!-- MODEL TATA SURYA -->
+      <a-entity id="solar"
+                gltf-model="url(models/Surya.glb)"
+                position="0 0 0"
+                scale="0.45 0.45 0.45"
+                rotation="0 0 0">
+      </a-entity>
+
+    </a-marker>
+
+    <a-entity camera></a-entity>
+  </a-scene>
+
+<script>
+let solar = document.getElementById("solar");
+let speed = 20000;
+let isRunning = true;
+let scaleValue = 0.45;
+
+// animasi default
+solar.setAttribute("animation", `property: rotation; to: 0 360 0; loop: true; dur: ${speed}; easing: linear`);
+
+function startOrbit() {
+  if (!isRunning) {
+    solar.setAttribute("animation", `property: rotation; to: 0 360 0; loop: true; dur: ${speed}; easing: linear`);
+    isRunning = true;
+  }
+}
+
+function stopOrbit() {
+  solar.removeAttribute("animation");
+  isRunning = false;
+}
+
+function speedUp() {
+  speed -= 2000;
+  if (speed < 2000) speed = 2000;
+  startOrbit();
+}
+
+function slowDown() {
+  speed += 2000;
+  if (speed > 60000) speed = 60000;
+  startOrbit();
+}
+
+function resetView() {
+  speed = 20000;
+  scaleValue = 0.45;
+  solar.setAttribute("scale", `${scaleValue} ${scaleValue} ${scaleValue}`);
+  solar.setAttribute("rotation", {x: 0, y: 0, z: 0});
+  startOrbit();
+}
+
+function zoomIn() {
+  scaleValue += 0.05;
+  solar.setAttribute("scale", `${scaleValue} ${scaleValue} ${scaleValue}`);
+}
+
+function zoomOut() {
+  if (scaleValue > 0.05) scaleValue -= 0.05;
+  solar.setAttribute("scale", `${scaleValue} ${scaleValue} ${scaleValue}`);
+}
+</script>
+
+</body>
+</html>
